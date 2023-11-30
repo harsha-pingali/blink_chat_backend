@@ -4,6 +4,9 @@ import chats from "./data/data.js";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
+import { errorHandler, notFound } from "./middlewares/errorHandler.js";
+import morgan from "morgan";
+
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 7071;
@@ -11,7 +14,13 @@ app.use(cors());
 app.use(express.json());
 connectDB();
 
-app.listen(port, console.log(`Server started on post ${port}`));
+app.use(
+  morgan("dev", {
+    skip: function (req, res) {
+      return res.statusCode < 400;
+    },
+  })
+);
 
 app.get("/", (req, res) => {
   res.send("API is Running");
@@ -28,3 +37,8 @@ app.get("/api/chat/:id/", (req, res) => {
 });
 
 app.use("/api/user", userRoutes);
+
+app.use(notFound);
+app.use(errorHandler);
+
+app.listen(port, console.log(`Server started on post ${port}`));
