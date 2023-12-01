@@ -56,3 +56,23 @@ export const authUser = asyncHandler(async (req, res, next) => {
     throw new Error("Invalid Login Try Again!!");
   }
 });
+
+//as we are using get request we use query  to search an user
+// ${base_url}/api/user?search=harsha
+export const allUsers = asyncHandler(async (req, res) => {
+  /*as we are taking query we use req.query
+  if it is param (/api/user/:id) we use req.params*/
+
+  const keyWord = req.query.search
+    ? {
+        $or: [
+          { name: { $regex: req.query.search, $options: "i" } },
+          { email: { $regex: req.query.search, $options: "i" } },
+        ],
+      }
+    : {};
+  /*$or ,$regex and $options are Mongodb Methods*/
+  //console.log(keyWord);
+  const users = await User.find(keyWord).find({ _id: { $ne: req.user._id } });
+  res.send(users);
+});
