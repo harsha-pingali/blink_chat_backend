@@ -4,6 +4,7 @@ import chats from "./data/data.js";
 import cors from "cors";
 import connectDB from "./config/db.js";
 import userRoutes from "./routes/userRoutes.js";
+import chatRoutes from "./routes/chatRoutes.js";
 import { errorHandler, notFound } from "./middlewares/errorHandler.js";
 import morgan from "morgan";
 
@@ -37,6 +38,7 @@ app.get("/api/chat/:id/", (req, res) => {
 });
 
 app.use("/api/user", userRoutes);
+app.use("/api/chat", chatRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

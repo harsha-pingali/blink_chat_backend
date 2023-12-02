@@ -13,16 +13,16 @@ const chatSchema = new mongoose.Schema(
     users: [
       {
         type: mongoose.Schema.Types.ObjectId, //ref to user model
-        ref: "User",
+        ref: "user", // name used in Mongoose Model
       },
     ],
     latestMessage: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Message",
+      ref: "message", // name used in Mongoose Model
     },
     groupAdmin: {
       type: mongoose.Schema.Types.ObjectId, //ref to user model
-      ref: "User",
+      ref: "user",
     },
   },
   {
