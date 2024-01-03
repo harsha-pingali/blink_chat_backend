@@ -16,11 +16,14 @@ app.use(express.json());
 connectDB();
 
 app.use(
-  morgan("dev", {
-    skip: function (req, res) {
-      return res.statusCode < 400;
-    },
-  })
+  morgan(
+    "dev"
+    // {
+    //   skip: function (req, res) {
+    //     return res.statusCode < 400;
+    //   },
+    // }
+  )
 );
 
 app.get("/", (req, res) => {

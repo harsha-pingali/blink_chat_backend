@@ -3,9 +3,10 @@ import Chat from "../models/chatModel.js";
 import User from "../models/userModel.js";
 export const accessChat = asyncHandler(async (req, res) => {
   const { userId } = req.body;
+  // console.log("USer Id is :" + userId);
   if (!userId) {
     console.log("User Id Param Not Sent To Request");
-    return res.sendStatus(401);
+    return res.status(401).send("Id not Found bro");
   }
   var isChat = await Chat.find({
     isGroupChat: false,
@@ -35,17 +36,17 @@ export const accessChat = asyncHandler(async (req, res) => {
       isGroupChat: false,
       users: [req.user._id, userId],
     };
-  }
-  try {
-    const createdChat = Chat.create(ChatData);
-    const fullChat = await Chat.findOne({ _id: createdChat._id }).populate(
-      "users",
-      "-password"
-    );
-    res.status(200).send(fullChat);
-  } catch (error) {
-    res.status(400);
-    throw new Error(error.message);
+    try {
+      const createdChat = await Chat.create(ChatData);
+      const fullChat = await Chat.findOne({ _id: createdChat._id }).populate(
+        "users",
+        "-password"
+      );
+      res.status(200).send(fullChat);
+    } catch (error) {
+      res.status(400);
+      throw new Error(error.message);
+    }
   }
 });
 
