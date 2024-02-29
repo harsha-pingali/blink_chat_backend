@@ -35,7 +35,7 @@ export const sendEmailReg = (data) => {
 
   let message = {
     from: process.env.MAIL_ID,
-
+    to: data.email,
     subject: "Account Creation",
     html: mail,
   };
