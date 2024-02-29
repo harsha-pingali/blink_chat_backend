@@ -166,3 +166,31 @@ export const removeFromGroup = asyncHandler(async (req, res) => {
     throw new Error("Chat Not Found !!");
   }
 });
+
+export const fetchChatById = asyncHandler(async (req, res) => {
+  console.log("Hie");
+  const { id } = req.params;
+  console.log(req.body);
+  try {
+    const chat = await Chat.findById(id)
+      .populate("users", "-password")
+      .populate("groupAdmin", "-password")
+      .populate("latestMessage")
+      .sort({ updatedAt: -1 })
+      .then(async (results) => {
+        results = await User.populate(results, {
+          path: "latestMessage.sender",
+          select: "name pic email",
+        });
+        res.status(201).send(results);
+      });
+    if (chat) {
+      console.log(chat);
+      res.json(chat);
+    }
+    res.json({ message: "Chat Not Found", status: 404 });
+  } catch (error) {
+    console.log(error.message);
+    throw new Error(error);
+  }
+});

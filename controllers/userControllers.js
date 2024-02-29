@@ -1,7 +1,7 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import generateToken from "../config/generateToken.js";
-
+import { sendEmailReg } from "../services/emailService.js";
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, pic } = req.body;
   if (!email || !password || !name) {
@@ -22,6 +22,7 @@ export const registerUser = asyncHandler(async (req, res) => {
     pic,
   });
   if (user) {
+    sendEmailReg(user);
     res.status(201).json({
       _id: user._id,
       name: user.name,
@@ -35,7 +36,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   }
 });
 
-export const authUser = asyncHandler(async (req, res, next) => {
+export const authUser = asyncHandler(async (req, res) => {
   try {
     const { email, password } = req.body;
     console.log(email + " " + password);
@@ -49,6 +50,11 @@ export const authUser = asyncHandler(async (req, res, next) => {
         email: user.email,
         pic: user.pic,
         token: generateToken(user._id),
+      });
+    } else {
+      console.log("In correct password");
+      res.status(404).json({
+        text: "Invalid credentials..",
       });
     }
   } catch (error) {
