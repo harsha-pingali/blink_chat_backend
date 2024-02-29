@@ -57,6 +57,7 @@ const io = new Server(appServer, {
   pingTimeout: 60000, // if there is no new message for a duration of 60s then connection closes
   cors: {
     origin: `${process.env.REACT_APP_BASE_URL}`,
+    credentials: true,
   },
 });
 
