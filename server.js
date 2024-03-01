@@ -55,10 +55,13 @@ const appServer = app.listen(
 
 const io = new Server(appServer, {
   pingTimeout: 60000, // if there is no new message for a duration of 60s then connection closes
+  transports: ["websocket", "polling"],
+  path: "/socket",
   cors: {
     origin: `${process.env.REACT_APP_BASE_URL}`,
     credentials: true,
   },
+  allowEIO3: true,
 });
 
 io.on("connection", (socket) => {
