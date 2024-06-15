@@ -3,6 +3,7 @@ import {
   registerUser,
   authUser,
   allUsers,
+  sendOtp,
 } from "../controllers/userControllers.js";
 import { protect } from "../middlewares/authMiddleware.js";
 
@@ -11,5 +12,6 @@ const router = express.Router();
 router.route("/").post(registerUser);
 router.post("/login", authUser);
 router.route("/").get(protect, allUsers); // This request must pass through protect middleware
+router.route("/resetpass").post(sendOtp);
 
 export default router;

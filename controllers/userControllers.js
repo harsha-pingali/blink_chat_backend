@@ -1,7 +1,8 @@
 import asyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import generateToken from "../config/generateToken.js";
-import { sendEmailReg } from "../services/emailService.js";
+import { sendEmailReg, sendResetMail } from "../services/emailService.js";
+import otpUtility from "../config/genOtp.js";
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, pic } = req.body;
   if (!email || !password || !name) {
@@ -81,4 +82,37 @@ export const allUsers = asyncHandler(async (req, res) => {
   //console.log(keyWord);
   const users = await User.find(keyWord).find({ _id: { $ne: req.user._id } });
   res.send(users);
+});
+
+export const sendOtp = asyncHandler(async (req, res) => {
+  const { email } = req.body;
+  console.log("email " + email);
+  if (email) {
+    const userData = await User.findOne({ email: email });
+    // console.log(userData);
+    const otp = await otpUtility();
+    // console.log("otp " + otp);
+    const params = {
+      email: email,
+      reqForReset: true,
+      userData: userData,
+      otp: otp,
+    };
+    try {
+      await sendResetMail(params);
+      res.status(200).json({
+        mailSent: true,
+        email: email,
+      });
+    } catch (error) {
+      console.log(error.message);
+      res.status(500).json({
+        message: error.message,
+      });
+    }
+  } else {
+    res.status(400).json({
+      message: "Not Found",
+    });
+  }
 });
