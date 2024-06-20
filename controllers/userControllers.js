@@ -3,6 +3,7 @@ import User from "../models/userModel.js";
 import generateToken from "../config/generateToken.js";
 import { sendEmailReg, sendResetMail } from "../services/emailService.js";
 import otpUtility from "../config/genOtp.js";
+import Otp from "../models/otpModal.js";
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password, pic } = req.body;
   if (!email || !password || !name) {
@@ -100,6 +101,10 @@ export const sendOtp = asyncHandler(async (req, res) => {
     };
     try {
       await sendResetMail(params);
+      await Otp.create({
+        email: email,
+        otp: otp,
+      });
       res.status(200).json({
         mailSent: true,
         email: email,
